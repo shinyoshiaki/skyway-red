@@ -1,6 +1,15 @@
 {
   "name": "@shinyoshiaki/skyway-red",
   "version": "0.0.1",
+  "description": "",
+  "homepage": "https://github.com/shinyoshiaki/skyway-red#readme",
+  "bugs": {
+    "url": "https://github.com/shinyoshiaki/skyway-red/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shinyoshiaki/skyway-red.git"
+  },
   "license": "MIT",
   "author": "shinyoshiaki <shinyoshiaki2012@gmail.com>",
   "main": "lib/index.js",
@@ -17,6 +26,7 @@
     "werift-rtp": "^0.2.2"
   },
   "devDependencies": {
+    "@shinyoshiaki/skyway-red": "^0.0.1",
     "@types/node": "^16.11.9",
     "@types/react": "^17.0.35",
     "@types/react-dom": "^17.0.11",
@@ -24,5 +34,8 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "typescript": "^4.5.2"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
