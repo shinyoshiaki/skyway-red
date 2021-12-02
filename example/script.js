@@ -1,4 +1,5 @@
 import Peer from "skyway-js";
+import { SkyWayRED } from "@shinyoshiaki/skyway-red";
 
 (async function main() {
   const localVideo = document.getElementById("js-local-stream");
@@ -30,8 +31,12 @@ import Peer from "skyway-js";
 
   const peer = (window.peer = new Peer({
     key: window.__SKYWAY_KEY__,
+    config: {
+      encodedInsertableStreams: true,
+    },
     debug: 3,
   }));
+  const skywayRED = new SkyWayRED();
 
   // Register caller handler
   callTrigger.addEventListener("click", () => {
@@ -42,8 +47,10 @@ import Peer from "skyway-js";
     }
 
     const mediaConnection = peer.call(remoteId.value, localStream);
+    skywayRED.activateRED(mediaConnection);
 
     mediaConnection.on("stream", async (stream) => {
+      skywayRED.setupReceiver(mediaConnection);
       // Render remote stream for caller
       remoteVideo.srcObject = stream;
       remoteVideo.playsInline = true;
@@ -63,8 +70,11 @@ import Peer from "skyway-js";
   // Register callee handler
   peer.on("call", (mediaConnection) => {
     mediaConnection.answer(localStream);
+    skywayRED.activateRED(mediaConnection);
 
     mediaConnection.on("stream", async (stream) => {
+      skywayRED.setupReceiver(mediaConnection);
+
       // Render remote stream for callee
       remoteVideo.srcObject = stream;
       remoteVideo.playsInline = true;

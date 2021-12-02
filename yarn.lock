@@ -923,10 +923,10 @@
   dependencies:
     lodash.memoize "^4.1.2"
 
-"@shinyoshiaki/skyway-red@^0.0.1":
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/@shinyoshiaki/skyway-red/-/skyway-red-0.0.1.tgz#177d1edf852e8f77cbf41792d0b6f0e6867649ce"
-  integrity sha512-pZxBPtpqCfRR+IdC78E7iY1mueT2uynhGpuogJh/2gWj4WLgt58gJNuj1egYqGvgASDQDFi9h+gkaR8XFSOjeQ==
+"@shinyoshiaki/skyway-red@^0.0.3":
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/@shinyoshiaki/skyway-red/-/skyway-red-0.0.3.tgz#8ca9bb91a6c02e29e817402285138b1e57c34a03"
+  integrity sha512-bogq+1rxgD2+bk2QBLfGTqPDMc1NWh9kU8mJg1d+injpyox7wN1nLocqcK3hbgmwQWzNFmAtctSS/DXrrUT4JQ==
   dependencies:
     skyway-js "^4.4.3"
     werift-rtp "^0.2.2"
