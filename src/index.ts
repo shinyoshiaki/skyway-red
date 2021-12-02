@@ -39,7 +39,7 @@ export class SkyWayRED {
       if (pc.iceConnectionState === "connected" && !negotiated) {
         negotiated = true;
         pc.getSenders().forEach((sender) => {
-          if (sender.track.kind === "audio") {
+          if (sender?.track?.kind === "audio") {
             const codec = sender
               .getParameters()
               .codecs.find((c) => c.mimeType.includes("red"));
