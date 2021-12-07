@@ -3,7 +3,6 @@ import { buffer2ArrayBuffer, Red, RedSender } from "werift-rtp";
 
 export class SkyWayRED {
   private redSender: RedSender;
-  remoteRedDistance = 0;
   lastReceivedRedPacket: Red;
   readonly redDistance = this.options.redDistance ?? 1;
   readonly useAdaptiveRedDistance = this.options.useAdaptiveRedDistance;
@@ -16,10 +15,14 @@ export class SkyWayRED {
   ) {}
 
   private getRTCPeerConnection(connection: MediaConnection) {
-    connection.open = true;
-    const pc = connection.getPeerConnection();
-    connection.open = false;
-    return pc;
+    if (connection.open) {
+      return connection.getPeerConnection();
+    } else {
+      connection.open = true;
+      const pc = connection.getPeerConnection();
+      connection.open = false;
+      return pc;
+    }
   }
 
   activateRED(connection: MediaConnection) {
@@ -126,7 +129,6 @@ export class SkyWayRED {
             receiver.track.kind === "audio"
           ) {
             const red = Red.deSerialize(encodedFrame.data);
-            this.remoteRedDistance = red.payloads.length;
             this.lastReceivedRedPacket = red;
           }
           controller.enqueue(encodedFrame);
