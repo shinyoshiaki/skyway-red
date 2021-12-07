@@ -34,7 +34,7 @@ import { SkyWayRED } from "../src";
   }));
   const skywayRED = new SkyWayRED({ useAdaptiveRedDistance: true });
   setInterval(() => {
-    console.log(skywayRED.remoteRedDistance);
+    console.log(skywayRED.remoteRedDistance, skywayRED.lastReceivedRedPacket);
   }, 1000);
 
   // Register caller handler
@@ -49,8 +49,6 @@ import { SkyWayRED } from "../src";
     skywayRED.activateRED(mediaConnection);
 
     mediaConnection.on("stream", async (stream) => {
-      skywayRED.setupReceiver(mediaConnection);
-
       // Render remote stream for caller
       remoteVideo.srcObject = stream;
       remoteVideo.playsInline = true;
@@ -75,8 +73,6 @@ import { SkyWayRED } from "../src";
     skywayRED.activateRED(mediaConnection);
 
     mediaConnection.on("stream", async (stream) => {
-      skywayRED.setupReceiver(mediaConnection);
-
       // Render remote stream for callee
       remoteVideo.srcObject = stream;
       remoteVideo.playsInline = true;

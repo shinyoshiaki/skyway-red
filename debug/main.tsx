@@ -1,5 +1,5 @@
 import Peer from "skyway-js";
-import React, { FC, useEffect, useRef, useState } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import ReactDOM from "react-dom";
 import { getAudioStream } from "./util";
 import { SkyWayRED } from "../src";
@@ -11,7 +11,7 @@ const peer = new Peer({
     encodedInsertableStreams: true,
   },
 });
-const skywayRED = new SkyWayRED({ redDistance: 0 });
+const skywayRED = new SkyWayRED({ redDistance: 3 });
 
 const App: FC = () => {
   const [peerId, setPeerId] = useState("");
@@ -28,7 +28,6 @@ const App: FC = () => {
       skywayRED.activateRED(connection);
 
       connection.on("stream", (stream) => {
-        skywayRED.setupReceiver(connection);
         remoteRef.current.srcObject = stream;
       });
     });

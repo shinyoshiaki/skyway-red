@@ -4,6 +4,7 @@ import { buffer2ArrayBuffer, Red, RedSender } from "werift-rtp";
 export class SkyWayRED {
   private redSender: RedSender;
   remoteRedDistance = 0;
+  lastReceivedRedPacket: Red;
   readonly redDistance = this.options.redDistance ?? 1;
   readonly useAdaptiveRedDistance = this.options.useAdaptiveRedDistance;
 
@@ -79,6 +80,10 @@ export class SkyWayRED {
         }
       });
     }
+
+    connection.on("stream", () => {
+      this.setupReceiver(connection);
+    });
   }
 
   private senderTransform(sender: RTCRtpSender, redSender?: RedSender) {
@@ -107,7 +112,7 @@ export class SkyWayRED {
     readableStream.pipeThrough(transformStream).pipeTo(writableStream);
   }
 
-  setupReceiver(connection) {
+  private setupReceiver(connection: MediaConnection) {
     const pc = this.getRTCPeerConnection(connection);
     pc.getReceivers().forEach((receiver) => {
       //@ts-ignore
@@ -122,6 +127,7 @@ export class SkyWayRED {
           ) {
             const red = Red.deSerialize(encodedFrame.data);
             this.remoteRedDistance = red.payloads.length;
+            this.lastReceivedRedPacket = red;
           }
           controller.enqueue(encodedFrame);
         },
