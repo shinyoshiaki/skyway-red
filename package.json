@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "skyway-js": "^4.4.3",
-    "werift-rtp": "^0.2.2"
+    "werift-rtp": "^0.3.1"
   },
   "devDependencies": {
     "@shinyoshiaki/skyway-red": "^0.1.0",

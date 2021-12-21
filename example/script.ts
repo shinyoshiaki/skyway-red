@@ -34,7 +34,7 @@ import { SkyWayRED } from "../src";
   }));
   const skywayRED = new SkyWayRED({ useAdaptiveRedDistance: true });
   setInterval(() => {
-    console.log(skywayRED.lastReceivedRedPacket);
+    console.log(skywayRED._lastReceivedRedPacket);
   }, 1000);
 
   // Register caller handler

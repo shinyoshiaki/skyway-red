@@ -1,11 +1,12 @@
 import { MediaConnection } from "skyway-js";
-import { buffer2ArrayBuffer, Red, RedSender } from "werift-rtp";
+import { buffer2ArrayBuffer, Red, RedEncoder } from "werift-rtp";
 
 export class SkyWayRED {
-  private redSender: RedSender;
-  lastReceivedRedPacket: Red;
   readonly redDistance = this.options.redDistance ?? 1;
+  private readonly encoder = new RedEncoder(this.redDistance);
   readonly useAdaptiveRedDistance = this.options.useAdaptiveRedDistance;
+
+  _lastReceivedRedPacket: Red;
 
   constructor(
     private options: Partial<{
@@ -26,11 +27,17 @@ export class SkyWayRED {
   }
 
   activateRED(connection: MediaConnection) {
+    if (!RTCRtpSender.getCapabilities) return;
+
     const pc = this.getRTCPeerConnection(connection);
     const { codecs } = RTCRtpSender.getCapabilities("audio");
     pc.getTransceivers()
       .filter((t) => t.sender.track.kind === "audio")
       .map((transceiver) => {
+        //@ts-ignore
+        if (!transceiver.setCodecPreferences) {
+          return;
+        }
         //@ts-ignore
         transceiver.setCodecPreferences([
           codecs.find((c) => c.mimeType.includes("red")),
@@ -43,16 +50,11 @@ export class SkyWayRED {
       if (pc.iceConnectionState === "connected" && !negotiated) {
         negotiated = true;
         pc.getSenders().forEach((sender) => {
-          if (sender?.track?.kind === "audio") {
-            const codec = sender
-              .getParameters()
-              .codecs.find((c) => c.mimeType.includes("red"));
-            const [blockPT] = codec.sdpFmtpLine.split("/");
-            this.redSender = new RedSender(Number(blockPT), this.redDistance);
-            this.senderTransform(sender, this.redSender);
-          } else {
-            this.senderTransform(sender);
+          //@ts-ignore
+          if (!sender.createEncodedStreams) {
+            return;
           }
+          this.senderTransform(sender);
         });
       }
     });
@@ -60,8 +62,8 @@ export class SkyWayRED {
     if (this.useAdaptiveRedDistance) {
       pc.addEventListener("connectionstatechange", () => {
         if (pc.iceConnectionState === "disconnected") {
-          if (this.redSender && this.redSender.distance < 4) {
-            this.redSender.distance = 4;
+          if (this.encoder && this.encoder.distance < 4) {
+            this.encoder.distance = 4;
           }
         }
       });
@@ -74,10 +76,10 @@ export class SkyWayRED {
           );
           if (remoteInbound?.fractionLost) {
             const distance = Math.round(remoteInbound.fractionLost * 10);
-            if (distance < this.redSender.distance) {
+            if (distance < this.encoder.distance) {
               await new Promise((r) => setTimeout(r, 500));
             }
-            this.redSender.distance = distance;
+            this.encoder.distance = distance;
             await new Promise((r) => setTimeout(r, 50));
           }
         }
@@ -89,25 +91,31 @@ export class SkyWayRED {
     });
   }
 
-  private senderTransform(sender: RTCRtpSender, redSender?: RedSender) {
+  private senderTransform(sender: RTCRtpSender) {
+    const codec = sender.getParameters().codecs[0].mimeType;
     //@ts-ignore
     const senderStreams = sender.createEncodedStreams();
+
     const readableStream = senderStreams.readable;
     const writableStream = senderStreams.writable;
     const transformStream = new TransformStream({
       transform: (encodedFrame, controller) => {
-        if (sender.track.kind === "video") {
+        if (
+          !codec.toLowerCase().includes("red") ||
+          encodedFrame.data.byteLength === 0
+        ) {
           controller.enqueue(encodedFrame);
           return;
         }
 
         const packet = Red.deSerialize(Buffer.from(encodedFrame.data));
-        const newPayload = packet.payloads.at(-1);
-        redSender.push({
-          buffer: newPayload.bin,
+        const newPayload = packet.blocks.at(-1);
+        this.encoder.push({
+          block: newPayload.block,
+          blockPT: newPayload.blockPT,
           timestamp: encodedFrame.timestamp,
         });
-        const red = redSender.build();
+        const red = this.encoder.build();
         encodedFrame.data = buffer2ArrayBuffer(red.serialize());
         controller.enqueue(encodedFrame);
       },
@@ -119,17 +127,26 @@ export class SkyWayRED {
     const pc = this.getRTCPeerConnection(connection);
     pc.getReceivers().forEach((receiver) => {
       //@ts-ignore
+      if (!receiver.createEncodedStreams) {
+        return;
+      }
+      //@ts-ignore
       const receiverStreams = receiver.createEncodedStreams();
+
       const readableStream = receiverStreams.readable;
       const writableStream = receiverStreams.writable;
       const transformStream = new TransformStream({
         transform: (encodedFrame, controller) => {
           if (
             encodedFrame.data.byteLength > 0 &&
-            receiver.track.kind === "audio"
+            receiver.track.kind === "audio" &&
+            receiver
+              .getParameters()
+              .codecs[0].mimeType.toLowerCase()
+              .includes("red")
           ) {
             const red = Red.deSerialize(encodedFrame.data);
-            this.lastReceivedRedPacket = red;
+            this._lastReceivedRedPacket = red;
           }
           controller.enqueue(encodedFrame);
         },

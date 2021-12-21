@@ -1838,6 +1838,13 @@ debug@^4.1.0, debug@^4.3.1:
   dependencies:
     ms "2.1.2"
 
+debug@^4.3.3:
+  version "4.3.3"
+  resolved "https://registry.yarnpkg.com/debug/-/debug-4.3.3.tgz#04266e0b70a98d4462e6e288e38259213332b664"
+  integrity sha512-/zxw5+vh1Tfv+4Qn7a5nsbcJKPaSvCDhojn6FEl9vupwK2VCSDtEiEtqr8DFtzYFOdz63LBkxec7DYuc2jon6Q==
+  dependencies:
+    ms "2.1.2"
+
 debug@~3.1.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/debug/-/debug-3.1.0.tgz#5bb5a0672628b64149566ba16819e61518c67261"
@@ -4798,6 +4805,21 @@ werift-rtp@^0.2.2:
     binary-data "^0.6.0"
     buffer "^6.0.3"
     debug "^4.3.1"
+    jspack "^0.0.4"
+    lodash "^4.17.20"
+    rx.mini "^1.1.0"
+
+werift-rtp@^0.3.1:
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/werift-rtp/-/werift-rtp-0.3.1.tgz#10be2de4aeee022e5f7a917d3599649b99e86e11"
+  integrity sha512-plqV8BFOqqVs9msz+KZ1qYxg+zBYeqZShuUUdEfN/udlQJWb7ULUmY6qnPX31Tz8AYti1sKm6AL0QI0KTu81Ng==
+  dependencies:
+    "@minhducsun2002/leb128" "^0.2.0"
+    "@shinyoshiaki/ebml-builder" "^0.0.1"
+    aes-js "^3.1.2"
+    binary-data "^0.6.0"
+    buffer "^6.0.3"
+    debug "^4.3.3"
     jspack "^0.0.4"
     lodash "^4.17.20"
     rx.mini "^1.1.0"
