@@ -12,3 +12,6 @@ npx parcel ./example/index.html
 ```
 
 コンソール画面に表示される URL を chrome ブラウザで開いて下さい。
+
+**デプロイ版**
+https://shinyoshiaki.github.io/skyway-red/build/example/
