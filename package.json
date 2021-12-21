@@ -19,7 +19,8 @@
     "src"
   ],
   "scripts": {
-    "build": "rm -rf lib && tsc -p ./tsconfig.production.json"
+    "build": "rm -rf lib && tsc -p ./tsconfig.production.json",
+    "build:example": "rm -rf dist && parcel ./example/index.html --public-url ./"
   },
   "dependencies": {
     "skyway-js": "^4.4.3",
