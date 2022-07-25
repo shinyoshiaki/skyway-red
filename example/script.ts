@@ -1,5 +1,5 @@
 import Peer from "skyway-js";
-import { SkyWayRED } from "../src";
+import { SkyWayRED } from "@shinyoshiaki/skyway-red";
 
 (async function main() {
   const localVideo = document.getElementById(

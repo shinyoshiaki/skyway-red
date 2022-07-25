@@ -3,8 +3,9 @@ import { buffer2ArrayBuffer, Red, RedEncoder } from "werift-rtp";
 
 export class SkyWayRED {
   readonly redDistance = this.options.redDistance ?? 1;
-  private readonly encoder = new RedEncoder(this.redDistance);
   readonly useAdaptiveRedDistance = this.options.useAdaptiveRedDistance;
+
+  private readonly encoder = new RedEncoder(this.redDistance);
 
   _lastReceivedRedPacket: Red;
 
